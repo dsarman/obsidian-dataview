@@ -15,6 +15,12 @@ declare module "obsidian" {
                 dataview?: {
                     api: DataviewApi;
                 };
+                "obsidian-second-brain"?: {
+                    taskFromLine: (checked: boolean, line: string, vault: Vault) => any
+                };
+                "obsidian-party"?: {
+                    taskEffect: (target: HTMLElement) => void
+                }
             };
         };
     }

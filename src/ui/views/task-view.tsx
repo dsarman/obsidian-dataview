@@ -72,20 +72,16 @@ function TaskItem({ item }: { item: STask }) {
         }
 
         async function effectFn() {
+            const sbPlugin = context.app.plugins.plugins["obsidian-second-brain"]
+
             for (let i = 0; i < flatted.length; i++) {
                 const _item = flatted[i];
-                let updatedText: string = _item.text;
-                if (context.settings.taskCompletionTracking) {
-                    updatedText = setTaskCompletion(
-                        _item.text,
-                        context.settings.taskCompletionUseEmojiShorthand,
-                        context.settings.taskCompletionText,
-                        context.settings.taskCompletionDateFormat,
-                        completed
-                    );
-                }
-                await rewriteTask(context.app.vault, _item, status, updatedText);
+                const task = sbPlugin?.taskFromLine(_item.checked, _item.text, context.app.vault)
+                const newTask = await task.toggle()
+                await rewriteTask(context.app.vault, _item, newTask.checked ? "x" : " ", newTask.getText());
             }
+            const partyPlugin = context.app.plugins.plugins["obsidian-party"]
+            partyPlugin?.taskEffect(evt.currentTarget)
             context.app.workspace.trigger("dataview:refresh-views");
         }
         effectFn();
